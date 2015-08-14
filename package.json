@@ -1,0 +1,11 @@
+{
+  "name": "barter",
+  "main": "barter.js",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "node ."
+  },
+  "dependencies": {
+    "rethinkdb": "^2.1.0"
+  }
+}
