@@ -3,12 +3,17 @@
   "main": "barter.js",
   "version": "0.1.0",
   "scripts": {
-    "start": "node ."
+    "start": "node .",
+    "test": "lab test --verbose"
   },
   "dependencies": {
     "boom": "^2.8.0",
     "hapi": "^9.0.1",
     "joi": "^6.6.1",
     "rethinkdb": "^2.1.0"
+  },
+  "devDependencies": {
+    "lab": "^5.15.1",
+    "should": "^7.0.4"
   }
 }
