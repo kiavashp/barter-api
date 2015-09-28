@@ -3,21 +3,12 @@ var config = require(__dirname +'/lib/node_modules/config');
 config.projectRoot = __dirname;
 config.dependenciesRoot = config.projectRoot +'/lib/node_modules';
 
-var log = require(config.dependenciesRoot +'/log');
-var r = require('rethinkdb');
+var barter = require(config.projectRoot +'/lib/index.js');
 
-r.connection = null;
+module.exports = barter;
 
-r.connect(config.rethinkdb).then(function (conn) {
-
-    r.connection = conn;
-
-    start();
-
-});
-
-function start() {
-
-    require(config.projectRoot +'/lib/index.js');
-
+if (require.main === module) {
+    barter.init(function () {
+        barter.start();
+    });
 }
