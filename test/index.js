@@ -57,10 +57,16 @@ function createTable(options) {
                 if (Array.isArray(options.indexes)) {
                     options.indexes.forEach(function (i) {
                         promise = promise.then(function () {
-                            return r.table(options.name).indexCreate(i).run(r.connection);
+                            return r.table(options.name).indexCreate(i)
+                                .run(r.connection);
                         });
                     });
                 }
+
+                promise = promise.then(function () {
+                    return r.table(options.name).indexWait()
+                        .run(r.connection);
+                });
 
                 promise = promise.then(function () {
                     done();
@@ -121,6 +127,11 @@ suite('setup', function () {
         indexes: ['name']
     }));
 
+    test('create table: userItem', { timeout: 10e3 }, createTable({
+        name: 'userItem',
+        indexes: ['userid']
+    }));
+
 });
 
 suite('test data', function () {
@@ -133,6 +144,10 @@ suite('test data', function () {
     test('item', fillTable({
         table: 'item',
         data: testData.items
+    }));
+
+    test('userItem', fillTable({
+        table: 'userItem'
     }));
 
 });
@@ -508,7 +523,7 @@ suite('user-item', function () {
                 token: user.token
             },
             payload: {
-                count: 4003
+                increment: 4000
             }
         }, function (response) {
 
@@ -538,7 +553,7 @@ suite('user-item', function () {
 
             response.statusCode.should.equal(200);
             response.headers.should.Object();
-            response.should.property('result').Array();
+            response.should.property('result').Array().lengthOf(2);
 
             response.result.forEach(function (item, i) {
 
@@ -558,6 +573,58 @@ suite('user-item', function () {
                 item.should.property('count').Number().exactly(count);
 
             });
+
+            done();
+
+        });
+
+    });
+
+    test('update', function (done) {
+
+        var user = testData.users[0];
+        var item = testData.items[1];
+
+        server.inject({
+            method: 'PUT',
+            url: '/user/' + user.id + '/item/' + item.id,
+            headers: {
+                token: user.token
+            },
+            payload: {
+                increment: -2000
+            }
+        }, function (response) {
+
+            response.statusCode.should.equal(200);
+            response.headers.should.Object();
+            response.should.property('result').equal(null);
+
+            done();
+
+        });
+
+    });
+
+    test('read', function (done) {
+
+        var user = testData.users[0];
+        var item = testData.items[1];
+
+        server.inject({
+            method: 'GET',
+            url: '/user/' + user.id + '/item/' + item.id,
+            headers: {
+                token: user.token
+            }
+        }, function (response) {
+
+            response.statusCode.should.equal(200);
+            response.headers.should.Object();
+            response.should.property('result').Object();
+            response.result.should.property('id').String().exactly(item.id);
+            response.result.should.property('name').String().exactly(item.name);
+            response.result.should.property('count').Number().exactly(2003);
 
             done();
 
