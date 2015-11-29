@@ -9,6 +9,7 @@
   "dependencies": {
     "boom": "2.8.0",
     "hapi": "9.0.1",
+    "hoek": "^3.0.4",
     "joi": "6.6.1",
     "rethinkdb": "2.1.0",
     "yargs": "3.30.0"
