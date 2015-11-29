@@ -346,4 +346,225 @@ suite('item', function () {
 
 });
 
+suite('user-item', function () {
+
+    test('list', function (done) {
+
+        var user = testData.users[0];
+        var item = testData.items[0];
+
+        server.inject({
+            method: 'GET',
+            url: '/user/' + user.id + '/item',
+            headers: {
+                token: user.token
+            }
+        }, function (response) {
+
+            response.statusCode.should.equal(200);
+            response.headers.should.Object();
+            response.should.property('result').Array().lengthOf(0);
+
+            done();
+
+        });
+
+    });
+
+    test('read', function (done) {
+
+        var user = testData.users[0];
+        var item = testData.items[0];
+
+        server.inject({
+            method: 'GET',
+            url: '/user/' + user.id + '/item/' + item.id,
+            headers: {
+                token: user.token
+            }
+        }, function (response) {
+
+            response.statusCode.should.equal(200);
+            response.headers.should.Object();
+            response.should.property('result').equal(null);
+
+            done();
+
+        });
+
+    });
+
+    test('create', function (done) {
+
+        var user = testData.users[0];
+        var item = testData.items[0];
+
+        server.inject({
+            method: 'POST',
+            url: '/user/' + user.id + '/item/' + item.id,
+            headers: {
+                token: user.token
+            },
+            payload: {}
+        }, function (response) {
+
+            response.statusCode.should.equal(201);
+            response.headers.should.Object();
+            response.should.property('result').equal(null);
+
+            done();
+
+        });
+
+    });
+
+    test('read', function (done) {
+
+        var user = testData.users[0];
+        var item = testData.items[0];
+
+        server.inject({
+            method: 'GET',
+            url: '/user/' + user.id + '/item/' + item.id,
+            headers: {
+                token: user.token
+            }
+        }, function (response) {
+
+            response.statusCode.should.equal(200);
+            response.headers.should.Object();
+            response.should.property('result').Object();
+            response.result.should.property('id').String();
+            response.result.should.property('name').String().exactly(item.name);
+            response.result.should.property('count').Number().exactly(1);
+
+            done();
+
+        });
+
+    });
+
+    test('create', function (done) {
+
+        var user = testData.users[0];
+        var item = testData.items[1];
+
+        server.inject({
+            method: 'POST',
+            url: '/user/' + user.id + '/item/' + item.id,
+            headers: {
+                token: user.token
+            },
+            payload: {
+                count: 3
+            }
+        }, function (response) {
+
+            response.statusCode.should.equal(201);
+            response.headers.should.Object();
+            response.should.property('result').equal(null);
+
+            done();
+
+        });
+
+    });
+
+    test('read', function (done) {
+
+        var user = testData.users[0];
+        var item = testData.items[1];
+
+        server.inject({
+            method: 'GET',
+            url: '/user/' + user.id + '/item/' + item.id,
+            headers: {
+                token: user.token
+            }
+        }, function (response) {
+
+            response.statusCode.should.equal(200);
+            response.headers.should.Object();
+            response.should.property('result').Object();
+            response.result.should.property('id').String().exactly(item.id);
+            response.result.should.property('name').String().exactly(item.name);
+            response.result.should.property('count').Number().exactly(3);
+
+            done();
+
+        });
+
+    });
+
+    test('update', function (done) {
+
+        var user = testData.users[0];
+        var item = testData.items[1];
+
+        server.inject({
+            method: 'PUT',
+            url: '/user/' + user.id + '/item/' + item.id,
+            headers: {
+                token: user.token
+            },
+            payload: {
+                count: 4003
+            }
+        }, function (response) {
+
+            response.statusCode.should.equal(200);
+            response.headers.should.Object();
+            response.should.property('result').equal(null);
+
+            done();
+
+        });
+
+    });
+
+    test('list', function (done) {
+
+        var user = testData.users[0];
+        var item0 = testData.items[0];
+        var item1 = testData.items[1];
+
+        server.inject({
+            method: 'GET',
+            url: '/user/' + user.id + '/item',
+            headers: {
+                token: user.token
+            }
+        }, function (response) {
+
+            response.statusCode.should.equal(200);
+            response.headers.should.Object();
+            response.should.property('result').Array();
+
+            response.result.forEach(function (item, i) {
+
+                var itemCompare;
+                var count;
+
+                if (item.id === item0.id) {
+                    itemCompare = item0;
+                    count = 1;
+                } else if (item.id === item1.id) {
+                    itemCompare = item1;
+                    count = 4003;
+                }
+
+                item.should.property('id').String().exactly(itemCompare.id);
+                item.should.property('name').String().exactly(itemCompare.name);
+                item.should.property('count').Number().exactly(count);
+
+            });
+
+            done();
+
+        });
+
+    });
+
+});
+
 exports.lab = lab;
