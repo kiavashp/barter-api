@@ -14,5 +14,5 @@ $ npm install
 
 copy config file
 ```
-$ cp lib/node_modules/config/config.sample.json lib/node_modules/config/config.sample.json
+$ cp lib/node_modules/config/config.sample.json lib/node_modules/config/config.json
 ```
